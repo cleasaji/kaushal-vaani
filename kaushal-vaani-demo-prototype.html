@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaushal Vaani — Voice-First Livelihood &amp; Skilling Assistant</title>
+<style>
+:root{--ink:#1a2233;--paper:#faf7f0;--saffron:#c9682b;--saffron-deep:#a24f1c;--leaf:#1d6b4a;--leaf-deep:#154f38;--navy:#1f3a63;--line:#e4ddcd;--card:#fff;--muted:#6b6455;font-size:16px;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Segoe UI","Noto Sans",Arial,sans-serif;background:var(--paper);color:var(--ink);}
+header.top{background:var(--navy);color:#fff;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+header.top .brand{display:flex;align-items:center;gap:12px;}
+header.top .brand .mark{width:42px;height:42px;border-radius:50%;background:conic-gradient(from 220deg,var(--saffron),var(--leaf) 55%,var(--navy) 100%);display:flex;align-items:center;justify-content:center;font-weight:700;}
+header.top h1{font-size:1.15rem;margin:0;font-weight:700;letter-spacing:.2px;}
+header.top p{margin:2px 0 0;font-size:.8rem;color:#c9d3e6;}
+nav.tabs{display:flex;gap:6px;flex-wrap:wrap;}
+nav.tabs button{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;padding:8px 14px;border-radius:20px;font-size:.85rem;cursor:pointer;}
+nav.tabs button.active{background:#fff;color:var(--navy);font-weight:700;border-color:#fff;}
+nav.tabs button.reset{border-style:dashed;}
+main{max-width:920px;margin:0 auto;padding:28px 20px 60px;}
+.panel{display:none;}.panel.active{display:block;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;margin-bottom:18px;}
+.card h3{margin-top:0;color:var(--navy);}
+.hero{display:flex;gap:24px;align-items:center;flex-wrap:wrap;}
+.hero .txt{flex:1;min-width:260px;}
+.hero h2{font-size:1.6rem;margin:0 0 8px;color:var(--navy);}
+.hero p{color:var(--muted);line-height:1.5;}
+.pill{display:inline-block;background:#f1ede1;color:var(--saffron-deep);padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-bottom:10px;}
+.lang-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:8px;margin-top:14px;}
+.lang-grid button.lang-btn{padding:9px 6px 8px;border-radius:10px;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-size:.85rem;display:flex;flex-direction:column;align-items:center;gap:1px;text-align:center;}
+.lang-btn .native{font-size:.95rem;font-weight:600;}
+.lang-btn .en{font-size:.68rem;color:var(--muted);}
+.lang-btn .tag{font-size:.58rem;color:var(--saffron-deep);margin-top:2px;}
+.lang-grid button.selected{border-color:var(--leaf);background:#eaf5ef;}
+.lang-grid button.selected .native,.lang-grid button.selected .en{color:var(--leaf-deep);font-weight:700;}
+.note{font-size:.78rem;color:var(--muted);margin:10px 0 0;line-height:1.45;}
+.sample-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:#fdf1e8;border:1px dashed var(--saffron);border-radius:10px;padding:12px 14px;margin-bottom:6px;}
+.sample-bar .s-txt{flex:1;min-width:220px;font-size:.85rem;color:var(--saffron-deep);}
+button.sample{background:var(--saffron);color:#fff;border:none;padding:11px 18px;border-radius:10px;font-size:.95rem;cursor:pointer;font-weight:700;}
+button.sample:hover{background:var(--saffron-deep);}
+.modal-overlay{position:fixed;inset:0;background:rgba(20,20,20,.45);display:flex;align-items:center;justify-content:center;z-index:50;}
+.modal-box{background:#fff;border-radius:14px;padding:22px;max-width:360px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.modal-box .icon{width:46px;height:46px;border-radius:50%;background:#fdf1e8;color:var(--saffron-deep);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:10px;}
+.modal-box h4{margin:0 0 6px;color:var(--navy);font-size:1.05rem;}
+.modal-box p{margin:0 0 16px;color:var(--muted);font-size:.87rem;line-height:1.45;}
+.modal-actions{display:flex;gap:10px;}
+.modal-actions button{flex:1;padding:10px 0;border-radius:9px;font-size:.9rem;cursor:pointer;}
+.modal-actions .allow{background:var(--leaf);color:#fff;border:none;font-weight:700;}
+.modal-actions .deny{background:#fff;color:var(--muted);border:1.5px solid var(--line);}
+.chat{border:1px solid var(--line);border-radius:12px;background:#fffdf8;padding:16px;min-height:280px;display:flex;flex-direction:column;gap:10px;max-height:420px;overflow-y:auto;}
+.msg{max-width:78%;padding:10px 14px;border-radius:14px;font-size:.94rem;line-height:1.4;}
+.msg.bot{background:#eef2f8;color:var(--navy);align-self:flex-start;border-bottom-left-radius:3px;}
+.msg.user{background:var(--leaf);color:#fff;align-self:flex-end;border-bottom-right-radius:3px;}
+.msg.system{align-self:center;color:var(--muted);font-size:.78rem;font-style:italic;max-width:95%;text-align:center;}
+.controls{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center;}
+.controls input[type=text]{flex:1;min-width:180px;padding:11px 14px;border-radius:10px;border:1.5px solid var(--line);font-size:.95rem;}
+button.primary{background:var(--leaf);color:#fff;border:none;padding:11px 18px;border-radius:10px;font-size:.95rem;cursor:pointer;font-weight:600;}
+button.primary:hover{background:var(--leaf-deep);}
+button:disabled,input:disabled{opacity:.55;cursor:not-allowed;}
+button.mic{background:var(--saffron);color:#fff;border:none;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.1rem;flex:none;}
+button.mic.listening{background:#d3453a;animation:pulse 1s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(211,69,58,.5);}100%{box-shadow:0 0 0 12px rgba(211,69,58,0);}}
+button.ghost{background:transparent;border:1.5px solid var(--line);padding:10px 16px;border-radius:10px;cursor:pointer;}
+.hint{font-size:.78rem;color:var(--muted);margin-top:8px;}
+.progress{height:6px;background:#eee3cf;border-radius:6px;overflow:hidden;margin-bottom:16px;}
+.progress>div{height:100%;background:linear-gradient(90deg,var(--saffron),var(--leaf));transition:width .4s;}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin:14px 0;}
+.profile-grid .k{color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.3px;}
+.profile-grid .v{font-weight:600;}
+.demo-tag{display:inline-block;background:#fff7e0;border:1px solid #e8d48a;color:#7a5b00;font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:6px;margin-bottom:8px;}
+.rec-card{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;}
+.rec-card.primary{border:2px solid var(--leaf);background:#fbfefc;}
+.rec-card .label{font-size:.72rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--leaf-deep);}
+.rec-card h4{margin:4px 0 8px;color:var(--navy);font-size:1.15rem;}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.badge{background:#eaf5ef;color:var(--leaf-deep);font-size:.74rem;font-weight:700;padding:3px 9px;border-radius:20px;}
+.badge.n{background:#eef2f8;color:var(--navy);}
+.why{margin:8px 0;padding:0;list-style:none;font-size:.9rem;line-height:1.6;}
+.why li.ok::before{content:"✓ ";color:var(--leaf);font-weight:700;}
+.why li.warn::before{content:"! ";color:var(--saffron-deep);font-weight:700;}
+.why-h{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-top:10px;}
+.considered{font-size:.84rem;color:var(--muted);line-height:1.6;border-top:1px solid var(--line);margin-top:8px;padding-top:8px;}
+.considered b{color:var(--ink);}
+.next{background:#eef2f8;border-radius:8px;padding:10px 12px;margin-top:10px;font-size:.88rem;color:var(--navy);}
+.next .label{color:var(--navy);}
+table{width:100%;border-collapse:collapse;font-size:.88rem;}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;}
+th{color:var(--muted);font-weight:600;font-size:.78rem;text-transform:uppercase;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;}
+.stat{border:1px solid var(--line);border-radius:10px;padding:12px;}
+.stat .n{font-size:1.25rem;font-weight:800;color:var(--leaf-deep);}
+.stat .l{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.bar-row .label{width:150px;font-size:.85rem;color:var(--muted);flex:none;}
+.bar-track{flex:1;background:#efe9db;border-radius:6px;height:16px;overflow:hidden;}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--saffron),var(--leaf));}
+.bar-val{width:34px;text-align:right;font-size:.8rem;color:var(--muted);}
+.insight{border-left:4px solid var(--saffron);background:#fdf6ef;padding:12px 14px;border-radius:6px;font-size:.92rem;line-height:1.5;}
+.src{font-size:.68rem;color:#7a5b00;background:#fff7e0;border-radius:4px;padding:1px 5px;margin-left:4px;white-space:nowrap;}
+footer{text-align:center;color:var(--muted);font-size:.78rem;padding:20px;}
+.empty{color:var(--muted);text-align:center;padding:40px 10px;font-size:.9rem;}
+@media(max-width:560px){.profile-grid{grid-template-columns:1fr;}.bar-row .label{width:100px;}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <div class="mark">KV</div>
+    <div>
+      <h1>Kaushal Vaani</h1>
+      <p>Voice-first livelihood mapping &amp; NSQF skilling — PM-AJAY GIA · Team Sirius (SIH26097)</p>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button data-tab="assistant" class="active">Citizen Assistant</button>
+    <button data-tab="dashboard">Officer Dashboard</button>
+    <button class="reset" id="reset-demo" title="Clear everything and restart the demo">⟲ Reset Demo</button>
+  </nav>
+</header>
+
+<main>
+
+  <section id="panel-assistant" class="panel active">
+
+    <div class="card hero">
+      <div class="txt">
+        <span class="pill">Demo Prototype</span>
+        <h2>Speak your livelihood. Hear your next skill.</h2>
+        <p>A working prototype of the voice assistant: pick a language, answer a few questions
+          (by voice if your browser supports it, or by typing), and Kaushal Vaani builds a livelihood
+          profile and suggests an NSQF-aligned skill pathway with clear reasons. The production version is planned
+          for toll-free IVR and WhatsApp channels.</p>
+      </div>
+    </div>
+
+    <div class="card" id="lang-card">
+      <div class="sample-bar">
+        <div class="s-txt"><b>Judges / quick demo:</b> load a ready-made beneficiary and watch the whole flow run in about a minute.<br>
+          <em>Illustrative Demo Beneficiary — Not Real Personal Data</em></div>
+        <button class="sample" id="sample-btn">▶ Try Sample Beneficiary</button>
+      </div>
+      <h3 style="margin-top:14px;">1. Choose your language</h3>
+      <div class="lang-grid" id="lang-grid"></div>
+      <p class="note" id="lang-note">Prototype voice support — production version will use Bhashini ASR/TTS for broader Indian-language coverage.
+        Interview questions are translated for 10 languages (English, Hindi, Marathi, Bengali, Tamil, Telugu, Gujarati, Kannada, Malayalam, Punjabi).
+        Other languages are listed for the production roadmap and fall back to English in this prototype. Voice output and recognition depend on your browser's installed voices.</p>
+    </div>
+
+    <div class="card" id="convo-card" style="display:none;">
+      <h3>2. Voice interview</h3>
+      <div class="progress"><div id="progress-bar" style="width:0%;"></div></div>
+      <div class="chat" id="chat"></div>
+      <div class="controls">
+        <button class="mic" id="mic-btn" title="Speak your answer">🎤</button>
+        <input type="text" id="text-input" placeholder="Or type your answer here...">
+        <button class="primary" id="send-btn">Send</button>
+      </div>
+      <div class="hint" id="mic-hint">Tap the mic and speak, or type your answer and press Send / Enter.</div>
+      <div class="hint">Prototype voice support — production version will use Bhashini ASR/TTS for broader Indian-language coverage.</div>
+    </div>
+
+    <div class="modal-overlay" id="mic-modal" style="display:none;">
+      <div class="modal-box">
+        <div class="icon">🎤</div>
+        <h4>Allow microphone for this answer?</h4>
+        <p>Kaushal Vaani asks before every question — not just once — because this data can include
+          caste-linked household details under PM-AJAY. Your voice is used only to transcribe this one
+          answer and is never stored as audio.</p>
+        <div class="modal-actions">
+          <button class="deny" id="mic-deny">Not now</button>
+          <button class="allow" id="mic-allow">Allow &amp; speak</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="result-card" style="display:none;">
+      <h3>3. Your livelihood profile</h3>
+      <div id="demo-flag"></div>
+      <div class="profile-grid" id="profile-grid"></div>
+      <h3>4. Recommended Pathway</h3>
+      <div id="recs"></div>
+      <div class="next" style="margin-top:14px;"><b>How matching works</b><br>We consider: current livelihood · skills/interests · available tools/assets · education · relevant skill pathways.<br>The prototype uses transparent rule-based matching. Production will use verified NSQF/NQR data.</div>
+      <p class="note">Illustrative matching engine: transparent rule-based matching of your answers against NSQF-aligned reference roles used for prototype demonstration.
+        It is not an ML/RAG model. RAG over official NSQF Qualification Packs and Bhashini integration are planned for production.
+        This is guidance only — no training centre, approval, salary or job is promised.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button class="primary" id="goto-dash">View Officer Dashboard →</button>
+        <button class="ghost" id="restart-btn">Start over</button>
+      </div>
+    </div>
+
+  </section>
+
+  <section id="panel-dashboard" class="panel">
+    <div class="card">
+      <span class="pill">GIA Planning View</span>
+      <h2 style="margin:6px 0 4px;color:var(--navy);">Block-level livelihood &amp; skilling snapshot</h2>
+      <p style="color:var(--muted);margin:0;">Each completed conversation is added here. <span class="src">Illustrative Demo Data</span>
+        The rows marked "demo" are made-up placeholders so the dashboard is not empty; they are not real beneficiaries, and not PLFS or government statistics.
+        PLFS is planned only as a reference data source for the production system.</p>
+    </div>
+
+    <div class="card">
+      <h3>A. Overview <span class="src">Illustrative Demo Data</span></h3>
+      <div class="stats" id="overview"></div>
+    </div>
+
+    <div class="card">
+      <h3>B. Sector-wise demand <span class="src">Illustrative Demo Data</span></h3>
+      <div id="sector-bars"></div>
+    </div>
+
+    <div class="card">
+      <h3>C. Skill gaps <span class="src">Illustrative Demo Data</span></h3>
+      <table id="gap-table"><thead><tr><th>Skill area</th><th>Demand signals</th><th>Most requested pathway</th></tr></thead><tbody></tbody></table>
+      <p class="note">Training capacity data is not connected in this prototype, so this shows demand signals only.</p>
+    </div>
+
+    <div class="card">
+      <h3>D. Possible planning insight</h3>
+      <div class="insight" id="insight"></div>
+      <p class="note"><b>Prototype-generated planning insight</b> — based only on the demo submissions above.</p>
+    </div>
+
+    <div class="card">
+      <h3>E. Beneficiary records</h3>
+      <table id="records-table">
+        <thead><tr><th>Name</th><th>Location</th><th>Current livelihood</th><th>Recommended pathway</th><th>NSQF level</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<section class="card" style="max-width:880px;margin:0 auto 18px;">
+  <h3>Data &amp; Technology References</h3>
+  <p class="note" style="margin-top:0;">Reference sources for the production design. Links open the organisations' official sites; this prototype does not call any of them.</p>
+  <ul style="line-height:1.9;margin:8px 0 0;padding-left:20px;font-size:.9rem;">
+    <li><a href="https://socialjustice.gov.in" target="_blank" rel="noopener">PM-AJAY GIA Guidelines — Dept. of Social Justice &amp; Empowerment</a></li>
+    <li><a href="https://ncvet.gov.in" target="_blank" rel="noopener">NCVET / NSQF</a></li>
+    <li><a href="https://nqr.gov.in" target="_blank" rel="noopener">National Qualifications Register (NQR)</a></li>
+    <li><a href="https://bhashini.gov.in" target="_blank" rel="noopener">Bhashini</a></li>
+    <li><a href="https://ai4bharat.iitm.ac.in" target="_blank" rel="noopener">AI4Bharat</a></li>
+    <li><a href="https://www.skillindia.gov.in" target="_blank" rel="noopener">PMKVY 4.0 — Skill India</a></li>
+    <li><a href="https://mospi.gov.in" target="_blank" rel="noopener">PLFS — MoSPI</a></li>
+  </ul>
+</section>
+
+<footer>Prototype for Smart India Hackathon 2026 · Problem Statement SIH26097 · Team Sirius. All data in this demo stays only in your browser session.</footer>
+
+<script>
+/* NSQF-aligned reference roles (illustrative subset for prototype demonstration).
+   kw = livelihood / interest keywords, ast = asset keywords (defaults to kw). */
+const NSQF_ROLES = [
+  { title:"Retail Sales Associate", sector:"Retail", level:3, duration:"3 months", kw:["shop","retail","sell","sales","vendor","kirana","market","dukaan","दुकान"] },
+  { title:"General Duty Assistant (Healthcare)", sector:"Healthcare", level:4, duration:"6 months", kw:["health","nurse","care","hospital","asha","patient","medical"] },
+  { title:"Solar PV Installer", sector:"Green Energy", level:4, duration:"3 months", kw:["electric","wiring","solar","electrician","panel","power"] },
+  { title:"Mason (General)", sector:"Construction", level:3, duration:"3 months", kw:["construction","mason","build","mistri","cement","house"] },
+  { title:"Field Technician - Electronics", sector:"Electronics", level:4, duration:"6 months", kw:["repair","mobile","electronics","tv","technician","mechanic"] },
+  { title:"Beauty & Wellness Associate", sector:"Beauty & Wellness", level:3, duration:"3 months", kw:["beauty","parlour","salon","wellness"] },
+  { title:"Organic Farming Technician", sector:"Agriculture", level:4, duration:"4 months",
+    kw:["farm","agri","crop","kheti","field","organic","खेती","खेत","किसान","शेती","ખેતી","ਖੇਤੀ","কৃষি","விவசாய","వ్యవసాయ","ಕೃಷಿ","കൃഷി"],
+    ast:["land","farm","field","tractor","irrigation","zameen","जमीन","ज़मीन","खेत","जमिन","शेती"] },
+  { title:"Data Entry Operator (IT-ITeS)", sector:"IT-ITeS", level:3, duration:"3 months", kw:["computer","typing","data","office","student","school","internet"] },
+  { title:"Domestic Data Entry & BPO Voice/Non-Voice", sector:"IT-ITeS", level:4, duration:"4 months", kw:["call","customer","bpo","english","phone"] },
+  { title:"Apparel Sewing Machine Operator", sector:"Apparel", level:3, duration:"3 months", kw:["tailor","sewing","cloth","stitch","garment","apparel","embroidery","सिलाई","शिवण"] },
+  { title:"Driver-cum-Mechanic (LMV)", sector:"Logistics", level:3, duration:"2 months", kw:["driver","drive","vehicle","auto","transport","car"] },
+  { title:"Food & Beverage Service Associate", sector:"Hospitality", level:3, duration:"3 months", kw:["cook","food","hotel","restaurant","catering","dhaba"] },
+];
+
+/* Interview: [0] = language-selected confirmation, [1..7] = questions */
+const KEYS = ["name","location","age","education","occupation","assets","interest"];
+const T = {
+ "en-IN":["Language selected: English","Namaste! I'm Kaushal Vaani. What is your name?","Which village or block are you calling from?","What is your age?","What is your highest level of education?","What do you currently do for a living — for example farming, a shop, daily labour, or something else?","Do you or your household have any land, a shop, a vehicle, or tools you use for work?","Is there a skill or trade you have always been interested in learning?"],
+ "hi-IN":["भाषा चुनी गई: हिंदी","नमस्ते! मैं कौशल वाणी हूँ। आपका नाम क्या है?","आप किस गाँव या ब्लॉक से बोल रहे हैं?","आपकी उम्र क्या है?","आपकी सबसे ऊँची पढ़ाई कितनी है?","आप अभी रोज़ी-रोटी के लिए क्या काम करते हैं — जैसे खेती, दुकान, मज़दूरी या कुछ और?","क्या आपके परिवार के पास ज़मीन, दुकान, वाहन या काम के औज़ार हैं?","क्या कोई हुनर या काम है जिसे आप हमेशा सीखना चाहते थे?"],
+ "mr-IN":["भाषा निवडली: मराठी","नमस्कार! मी कौशल वाणी आहे. तुमचे नाव काय आहे?","तुम्ही कोणत्या गावातून किंवा ब्लॉकमधून बोलत आहात?","तुमचे वय किती आहे?","तुमचे सर्वात जास्त शिक्षण किती झाले आहे?","तुम्ही सध्या उदरनिर्वाहासाठी काय काम करता — उदा. शेती, दुकान, रोजंदारी किंवा इतर काही?","तुमच्या कुटुंबाकडे जमीन, दुकान, वाहन किंवा कामाची अवजारे आहेत का?","एखादे कौशल्य किंवा व्यवसाय तुम्हाला नेहमी शिकावासा वाटला आहे का?"],
+ "bn-IN":["ভাষা নির্বাচিত: বাংলা","নমস্কার! আমি কৌশল বাণী। আপনার নাম কী?","আপনি কোন গ্রাম বা ব্লক থেকে বলছেন?","আপনার বয়স কত?","আপনার সর্বোচ্চ শিক্ষাগত যোগ্যতা কী?","আপনি এখন জীবিকার জন্য কী কাজ করেন — যেমন চাষ, দোকান, দিনমজুরি বা অন্য কিছু?","আপনার পরিবারের কি জমি, দোকান, যানবাহন বা কাজের সরঞ্জাম আছে?","এমন কোনো দক্ষতা বা কাজ আছে যা আপনি সবসময় শিখতে চেয়েছেন?"],
+ "ta-IN":["மொழி தேர்ந்தெடுக்கப்பட்டது: தமிழ்","வணக்கம்! நான் கௌசல் வாணி. உங்கள் பெயர் என்ன?","நீங்கள் எந்த கிராமம் அல்லது வட்டாரத்திலிருந்து பேசுகிறீர்கள்?","உங்கள் வயது என்ன?","உங்கள் உயர்ந்த கல்வித் தகுதி என்ன?","நீங்கள் இப்போது வாழ்வாதாரத்திற்காக என்ன வேலை செய்கிறீர்கள் — விவசாயம், கடை, தினக்கூலி அல்லது வேறு ஏதாவது?","உங்கள் குடும்பத்திடம் நிலம், கடை, வாகனம் அல்லது வேலைக்கான கருவிகள் உள்ளனவா?","நீங்கள் எப்போதும் கற்க விரும்பிய திறன் அல்லது தொழில் ஏதேனும் உண்டா?"],
+ "te-IN":["భాష ఎంచుకోబడింది: తెలుగు","నమస్తే! నేను కౌశల్ వాణి. మీ పేరు ఏమిటి?","మీరు ఏ గ్రామం లేదా మండలం నుండి మాట్లాడుతున్నారు?","మీ వయసు ఎంత?","మీ అత్యున్నత విద్యార్హత ఏమిటి?","మీరు ప్రస్తుతం జీవనోపాధి కోసం ఏమి చేస్తున్నారు — వ్యవసాయం, దుకాణం, కూలి పని లేదా మరేదైనా?","మీ కుటుంబానికి భూమి, దుకాణం, వాహనం లేదా పని పరికరాలు ఉన్నాయా?","మీరు ఎప్పటినుంచో నేర్చుకోవాలనుకున్న నైపుణ్యం లేదా వృత్తి ఏదైనా ఉందా?"],
+ "gu-IN":["ભાષા પસંદ કરી: ગુજરાતી","નમસ્તે! હું કૌશલ વાણી છું. તમારું નામ શું છે?","તમે કયા ગામ અથવા બ્લોકમાંથી વાત કરો છો?","તમારી ઉંમર કેટલી છે?","તમારું સૌથી ઊંચું શિક્ષણ કેટલું છે?","તમે હાલમાં આજીવિકા માટે શું કામ કરો છો — જેમ કે ખેતી, દુકાન, મજૂરી કે બીજું કંઈ?","તમારા પરિવાર પાસે જમીન, દુકાન, વાહન કે કામના સાધનો છે?","શું કોઈ કુશળતા કે વ્યવસાય છે જે તમે હંમેશાં શીખવા માંગતા હતા?"],
+ "kn-IN":["ಭಾಷೆ ಆಯ್ಕೆಯಾಗಿದೆ: ಕನ್ನಡ","ನಮಸ್ತೆ! ನಾನು ಕೌಶಲ್ ವಾಣಿ. ನಿಮ್ಮ ಹೆಸರೇನು?","ನೀವು ಯಾವ ಗ್ರಾಮ ಅಥವಾ ತಾಲೂಕಿನಿಂದ ಮಾತನಾಡುತ್ತಿದ್ದೀರಿ?","ನಿಮ್ಮ ವಯಸ್ಸು ಎಷ್ಟು?","ನಿಮ್ಮ ಅತ್ಯುನ್ನತ ವಿದ್ಯಾಭ್ಯಾಸ ಯಾವುದು?","ನೀವು ಈಗ ಜೀವನೋಪಾಯಕ್ಕಾಗಿ ಏನು ಮಾಡುತ್ತಿದ್ದೀರಿ — ಕೃಷಿ, ಅಂಗಡಿ, ಕೂಲಿ ಅಥವಾ ಬೇರೇನಾದರೂ?","ನಿಮ್ಮ ಕುಟುಂಬದ ಬಳಿ ಜಮೀನು, ಅಂಗಡಿ, ವಾಹನ ಅಥವಾ ಕೆಲಸದ ಸಾಧನಗಳಿವೆಯೇ?","ನೀವು ಯಾವಾಗಲೂ ಕಲಿಯಬೇಕೆಂದು ಬಯಸಿದ ಕೌಶಲ್ಯ ಅಥವಾ ವೃತ್ತಿ ಏನಾದರೂ ಇದೆಯೇ?"],
+ "ml-IN":["ഭാഷ തിരഞ്ഞെടുത്തു: മലയാളം","നമസ്കാരം! ഞാൻ കൗശൽ വാണി. നിങ്ങളുടെ പേര് എന്താണ്?","നിങ്ങൾ ഏത് ഗ്രാമത്തിൽ നിന്നോ ബ്ലോക്കിൽ നിന്നോ ആണ് സംസാരിക്കുന്നത്?","നിങ്ങളുടെ പ്രായം എത്രയാണ്?","നിങ്ങളുടെ ഉയർന്ന വിദ്യാഭ്യാസ യോഗ്യത എന്താണ്?","നിങ്ങൾ ഇപ്പോൾ ഉപജീവനത്തിനായി എന്ത് ജോലി ചെയ്യുന്നു — കൃഷി, കട, കൂലിപ്പണി അല്ലെങ്കിൽ മറ്റെന്തെങ്കിലും?","നിങ്ങളുടെ കുടുംബത്തിന് ഭൂമി, കട, വാഹനം അല്ലെങ്കിൽ പണിയായുധങ്ങൾ ഉണ്ടോ?","നിങ്ങൾ എപ്പോഴും പഠിക്കാൻ ആഗ്രഹിച്ച ഏതെങ്കിലും വൈദഗ്ധ്യമോ തൊഴിലോ ഉണ്ടോ?"],
+ "pa-IN":["ਭਾਸ਼ਾ ਚੁਣੀ ਗਈ: ਪੰਜਾਬੀ","ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਮੈਂ ਕੌਸ਼ਲ ਵਾਣੀ ਹਾਂ। ਤੁਹਾਡਾ ਨਾਮ ਕੀ ਹੈ?","ਤੁਸੀਂ ਕਿਹੜੇ ਪਿੰਡ ਜਾਂ ਬਲਾਕ ਤੋਂ ਬੋਲ ਰਹੇ ਹੋ?","ਤੁਹਾਡੀ ਉਮਰ ਕਿੰਨੀ ਹੈ?","ਤੁਹਾਡੀ ਸਭ ਤੋਂ ਉੱਚੀ ਪੜ੍ਹਾਈ ਕਿੰਨੀ ਹੈ?","ਤੁਸੀਂ ਹੁਣ ਰੋਜ਼ੀ-ਰੋਟੀ ਲਈ ਕੀ ਕੰਮ ਕਰਦੇ ਹੋ — ਜਿਵੇਂ ਖੇਤੀ, ਦੁਕਾਨ, ਮਜ਼ਦੂਰੀ ਜਾਂ ਹੋਰ ਕੁਝ?","ਕੀ ਤੁਹਾਡੇ ਪਰਿਵਾਰ ਕੋਲ ਜ਼ਮੀਨ, ਦੁਕਾਨ, ਵਾਹਨ ਜਾਂ ਕੰਮ ਦੇ ਸੰਦ ਹਨ?","ਕੀ ਕੋਈ ਹੁਨਰ ਜਾਂ ਕੰਮ ਹੈ ਜੋ ਤੁਸੀਂ ਹਮੇਸ਼ਾ ਸਿੱਖਣਾ ਚਾਹੁੰਦੇ ਸੀ?"],
+};
+const SAMPLE = { name:"Rekha Devi", location:"Sample Village, Nashik Block", age:"34", education:"10th Pass",
+  occupation:"Farming / agricultural labour", assets:"Small landholding and basic farming tools", interest:"Modern and organic farming" };
+
+const LANGS = [
+  ["hi-IN","हिंदी","Hindi"],["bn-IN","বাংলা","Bengali"],["mr-IN","मराठी","Marathi"],["te-IN","తెలుగు","Telugu"],["ta-IN","தமிழ்","Tamil"],
+  ["gu-IN","ગુજરાતી","Gujarati"],["ur-IN","اردو","Urdu"],["kn-IN","ಕನ್ನಡ","Kannada"],["or-IN","ଓଡ଼ିଆ","Odia"],["ml-IN","മലയാളം","Malayalam"],
+  ["pa-IN","ਪੰਜਾਬੀ","Punjabi"],["as-IN","অসমীয়া","Assamese"],["mai-IN","मैथिली","Maithili"],["sa-IN","संस्कृतम्","Sanskrit"],["ne-NP","नेपाली","Nepali"],
+  ["kok-IN","कोंकणी","Konkani"],["sd-IN","سنڌي","Sindhi"],["doi-IN","डोगरी","Dogri"],["ks-IN","کٲشُر","Kashmiri"],["mni-IN","মৈতৈলোন্","Manipuri"],
+  ["sat-IN","ᱥᱟᱱᱛᱟᱲᱤ","Santali"],["brx-IN","बर'","Bodo"],["en-IN","English","English"]
+].map(a => ({ code:a[0], label:a[1], en:a[2] }));
+
+let state = { lang:null, qLang:"en-IN", step:0, answers:{}, records:[], demo:false, runId:0 };
+
+const $ = id => document.getElementById(id);
+const chatEl = $("chat");
+function escapeHtml(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+const sl = s => s === "Green Energy" ? "Solar/Electrical" : s;
+
+/* ---------- Language selection ---------- */
+const langGrid = $("lang-grid");
+LANGS.forEach(l => {
+  const b = document.createElement("button");
+  b.className = "lang-btn";
+  b.dataset.code = l.code;
+  b.innerHTML = `<span class="native">${l.label}</span><span class="en">${l.en}</span>` + (T[l.code] ? "" : `<span class="tag">English fallback</span>`);
+  b.onclick = () => selectLang(l.code);
+  langGrid.appendChild(b);
+});
+function selectLang(code) {
+  const l = LANGS.find(x => x.code === code);
+  state.lang = code;
+  state.qLang = T[code] ? code : "en-IN";
+  [...langGrid.children].forEach(c => c.classList.toggle("selected", c.dataset.code === code));
+  $("convo-card").style.display = "block";
+  $("convo-card").scrollIntoView({behavior:"smooth", block:"start"});
+  addMsg(T[state.qLang][0] + (T[code] ? "" : ` (${l.en} questions not translated in this prototype — showing English)`), "system");
+  if (state.step < KEYS.length) askNext();
+}
+
+/* ---------- Chat + voice output ---------- */
+function addMsg(text, who) {
+  const d = document.createElement("div");
+  d.className = "msg " + who;
+  d.textContent = text;
+  chatEl.appendChild(d);
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+function speak(text) {
+  if (!("speechSynthesis" in window)) return;
+  try {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = state.qLang;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  } catch (e) { /* ignore */ }
+}
+function askNext() {
+  const s = state.step;
+  const q = T[state.qLang][s + 1];
+  $("progress-bar").style.width = Math.round((s / KEYS.length) * 100) + "%";
+  addMsg(q, "bot");
+  speak(q);
+  if (state.demo) {
+    const id = state.runId;
+    setTimeout(() => { if (state.runId === id && state.step === s) submitAnswer(SAMPLE[KEYS[s]]); }, 1300);
+  }
+}
+function submitAnswer(val) {
+  if (!val || !val.trim() || state.step >= KEYS.length || !state.lang) return;
+  addMsg(val.trim(), "user");
+  state.answers[KEYS[state.step]] = val.trim();
+  state.step++;
+  $("text-input").value = "";
+  if (state.step < KEYS.length) setTimeout(askNext, 400);
+  else { $("progress-bar").style.width = "100%"; setTimeout(finishInterview, 500); }
+}
+$("send-btn").onclick = () => { if (!state.demo) submitAnswer($("text-input").value); };
+$("text-input").addEventListener("keydown", e => { if (e.key === "Enter" && !state.demo) submitAnswer(e.target.value); });
+
+/* ---------- Speech recognition (browser Web Speech API, best-effort) ---------- */
+const micBtn = $("mic-btn");
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognizer = null;
+if (SR) {
+  recognizer = new SR();
+  recognizer.continuous = false;
+  recognizer.interimResults = false;
+  recognizer.onresult = e => submitAnswer(e.results[0][0].transcript);
+  recognizer.onend = () => micBtn.classList.remove("listening");
+  recognizer.onerror = () => { micBtn.classList.remove("listening"); $("mic-hint").textContent = "Couldn't hear that clearly (or this language isn't available in your browser) — please type your answer instead."; };
+} else {
+  $("mic-hint").textContent = "Voice input isn't supported in this browser — please type your answer. (Works best in Chrome.)";
+}
+micBtn.onclick = () => {
+  if (state.demo) return;
+  if (!recognizer) { $("mic-hint").textContent = "Voice input isn't supported in this browser — please type your answer."; return; }
+  $("mic-modal").style.display = "flex"; // consent asked before every answer, by design
+};
+$("mic-deny").onclick = () => { $("mic-modal").style.display = "none"; $("mic-hint").textContent = "No problem — you can type your answer instead."; $("text-input").focus(); };
+$("mic-allow").onclick = () => {
+  $("mic-modal").style.display = "none";
+  recognizer.lang = state.qLang;
+  micBtn.classList.add("listening");
+  $("mic-hint").textContent = "Listening in " + state.qLang + " (browser recognition — Bhashini ASR planned for production)...";
+  try { recognizer.start(); } catch (e) { micBtn.classList.remove("listening"); }
+};
+
+/* ---------- Transparent rule-based matching (no randomness, no ML) ---------- */
+const hits = (txt, kws) => { const t = (txt || "").toLowerCase(); return (kws || []).filter(k => t.includes(k)); };
+function parseEdu(txt) {
+  const t = (txt || "").toLowerCase();
+  if (/graduat|degree|b\.?a\b|b\.?sc|b\.?com|college|ग्रेजुएट|स्नातक/.test(t)) return 5;
+  if (/\b12(th)?\b|twelfth|hsc|intermediate|बारहवीं|बारावी/.test(t)) return 4;
+  if (/\b10(th)?\b|tenth|ssc|matric|दसवीं|दहावी/.test(t)) return 3;
+  if (/\b8(th)?\b|eighth|आठवीं|आठवी/.test(t)) return 2;
+  if (/\b[1-7](th|st|nd|rd)?\b|primary/.test(t)) return 1;
+  if (/illiterate|no school|अनपढ़/.test(t)) return 0;
+  return null;
+}
+function matchRoles(a) {
+  const edu = parseEdu(a.education);
+  const out = NSQF_ROLES.map((role, idx) => {
+    const occ = hits(a.occupation, role.kw), intr = hits(a.interest, role.kw), ast = hits(a.assets, role.ast || role.kw);
+    const eduOk = edu !== null; // education is only a light matching signal, not an eligibility rule
+    const score = (occ.length ? 3 : 0) + (intr.length ? 3 : 0) + (ast.length ? 2 : 0) + (eduOk ? 1 : 0);
+    const signals = occ.length + intr.length + ast.length;
+    return { ...role, idx, score, signals, occ: occ.length > 0, intr: intr.length > 0, ast: ast.length > 0, eduOk, eduKnown: edu !== null };
+  }).filter(r => r.signals > 0);
+  out.sort((x, y) => y.score - x.score || x.idx - y.idx); // deterministic tie-break: list order
+  return out.slice(0, 3);
+}
+function livCat(t) {
+  t = (t || "").toLowerCase();
+  if (/farm|agri|kheti|खेती|शेती|खेत|किसान/.test(t)) return "Farming / agri labour";
+  if (/shop|retail|vendor|dukaan|दुकान/.test(t)) return "Retail / small shop";
+  if (/construction|mason|mistri|labour|मज़दूरी|मजदूरी/.test(t)) return "Construction / daily labour";
+  if (/tailor|stitch|sew|सिलाई/.test(t)) return "Tailoring";
+  return "Other";
+}
+
+/* ---------- Result rendering ---------- */
+function recCard(r, a, primary) {
+  const why = [];
+  if (r.occ) why.push(`<li class="ok">Current livelihood: ${escapeHtml(a.occupation)}</li>`);
+  if (r.intr) why.push(`<li class="ok">Interest: ${escapeHtml(a.interest)}</li>`);
+  if (r.ast) why.push(`<li class="ok">Available asset: ${escapeHtml(a.assets)}</li>`);
+  if (r.eduOk) why.push(`<li class="ok">Education considered as a matching signal: ${escapeHtml(a.education)}</li>`);
+  why.push(`<li class="warn">Eligibility check: education and prior experience will be verified against the specific qualification/course requirements.</li>`);
+  return `<div class="rec-card${primary ? " primary" : ""}">
+    <div class="label">${primary ? "Recommended Pathway" : "Alternative pathway"}</div>
+    <h4>${escapeHtml(r.title)}</h4>
+    <div class="badges"><span class="badge">Sector: ${escapeHtml(sl(r.sector))}</span><span class="badge n">NSQF Level ${r.level}</span><span class="badge n">Duration: ${r.duration}</span></div>
+    <div class="considered" style="border-top:0;margin-top:0;padding-top:0;"><b>Qualification Pack:</b> not shown in prototype — to be verified from the official NQR<br><b>Source:</b> NCVET / National Qualifications Register (production integration planned)</div>
+    <div class="why-h">Why this matches</div>
+    <ul class="why">${why.join("")}</ul>
+    <div class="considered"><b>Existing skills considered:</b> ${escapeHtml(a.occupation)}<br><b>Interest considered:</b> ${escapeHtml(a.interest)}<br><b>Assets considered:</b> ${escapeHtml(a.assets)}</div>
+    <div class="next"><div class="label">NEXT STEP</div>Training-centre availability can be checked during enrolment.</div>
+  </div>`;
+}
+function finishInterview() {
+  $("convo-card").style.display = "none";
+  const a = state.answers;
+  const recs = matchRoles(a);
+  $("demo-flag").innerHTML = state.demo ? `<div class="demo-tag">Illustrative Demo Beneficiary — Not Real Personal Data</div>` : "";
+  $("profile-grid").innerHTML = [["Name",a.name],["Location",a.location],["Age",a.age],["Education",a.education],["Current livelihood",a.occupation],["Assets / tools",a.assets],["Stated interest",a.interest]]
+    .map(([k, v]) => `<div class="k">${k}</div><div class="v">${escapeHtml(v || "—")}</div>`).join("");
+  $("recs").innerHTML = recs.length
+    ? recs.map((r, i) => recCard(r, a, i === 0)).join("")
+    : `<div class="rec-card"><div class="label">No confident match</div><h4>Counsellor review suggested</h4><p style="margin:0;color:var(--muted);font-size:.9rem;">The prototype's reference roles did not match the livelihood, interest or assets you described. A skilling counsellor could review this profile.</p></div>`;
+  $("result-card").style.display = "block";
+  $("result-card").scrollIntoView({behavior:"smooth", block:"start"});
+  const top = recs[0];
+  state.records.push({ name:a.name || "—", location:a.location || "—", occ:a.occupation || "—", liv:livCat(a.occupation),
+    title: top ? top.title : "Counsellor review", level: top ? top.level : "—", sector: top ? top.sector : "Unmatched", demo:false, sample:state.demo });
+  state.demo = false;
+  $("text-input").disabled = false; $("send-btn").disabled = false; micBtn.disabled = false;
+  renderDashboard();
+}
+
+/* ---------- Sample beneficiary / resets ---------- */
+$("sample-btn").onclick = () => {
+  resetAssistant();
+  state.demo = true;
+  $("text-input").disabled = true; $("send-btn").disabled = true; micBtn.disabled = true;
+  $("mic-hint").textContent = "Demo mode: Illustrative Demo Beneficiary — Not Real Personal Data. Answers are filled in automatically.";
+  selectLang(state.lang || "en-IN");
+};
+function resetAssistant() {
+  state.runId++; state.step = 0; state.answers = {}; state.demo = false;
+  try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
+  try { recognizer && recognizer.abort(); } catch (e) {}
+  chatEl.innerHTML = "";
+  $("progress-bar").style.width = "0%";
+  $("result-card").style.display = "none";
+  $("convo-card").style.display = "none";
+  $("text-input").value = ""; $("text-input").disabled = false; $("send-btn").disabled = false; micBtn.disabled = false;
+  micBtn.classList.remove("listening");
+  $("mic-modal").style.display = "none";
+  $("mic-hint").textContent = SR ? "Tap the mic and speak, or type your answer and press Send / Enter." : "Voice input isn't supported in this browser — please type your answer. (Works best in Chrome.)";
+}
+$("restart-btn").onclick = () => {
+  resetAssistant();
+  state.lang = null; state.qLang = "en-IN";
+  [...langGrid.children].forEach(c => c.classList.remove("selected"));
+  $("lang-card").scrollIntoView({behavior:"smooth"});
+};
+$("reset-demo").onclick = () => {
+  resetAssistant();
+  state.lang = null; state.qLang = "en-IN";
+  [...langGrid.children].forEach(c => c.classList.remove("selected"));
+  state.records = seedRecords();
+  renderDashboard();
+  switchTab("assistant");
+  window.scrollTo({top:0, behavior:"smooth"});
+};
+$("goto-dash").onclick = () => switchTab("dashboard");
+
+/* ---------- Officer dashboard ---------- */
+function seedRecords() { // Illustrative Demo Data — invented placeholders, not real people or statistics
+  const S = [["Sample Village A","Farming","Organic Farming Technician"],["Sample Village A","Farm labour","Organic Farming Technician"],
+    ["Sample Village B","Farming","Organic Farming Technician"],["Sample Village B","Daily labour","Mason (General)"],
+    ["Sample Village C","Shop assistant","Retail Sales Associate"],["Sample Village C","ASHA helper","General Duty Assistant (Healthcare)"],
+    ["Sample Village D","Electrician helper","Solar PV Installer"],["Sample Village D","Student","Data Entry Operator (IT-ITeS)"]];
+  return S.map((s, i) => { const r = NSQF_ROLES.find(x => x.title === s[2]);
+    return { name:"Demo Beneficiary " + (i + 1), location:s[0] + ", Nashik Block", occ:s[1], liv:livCat(s[1]), title:r.title, level:r.level, sector:r.sector, demo:true }; });
+}
+function topOf(counts) { const e = Object.entries(counts).sort((a, b) => b[1] - a[1]); return e.length ? e[0] : ["—", 0]; }
+function renderDashboard() {
+  const R = state.records, total = R.length;
+  const bySec = {}, byLiv = {};
+  R.forEach(r => { bySec[r.sector] = (bySec[r.sector] || 0) + 1; byLiv[r.liv] = (byLiv[r.liv] || 0) + 1; });
+  const topSec = topOf(bySec), topLiv = topOf(byLiv);
+  $("overview").innerHTML = [["Total beneficiary submissions", total],["Number of sectors", Object.keys(bySec).length],["Most requested skill area", sl(topSec[0])],["Most common current livelihood", topLiv[0]]]
+    .map(([l, n]) => `<div class="stat"><div class="n">${escapeHtml(n)}</div><div class="l">${l}</div></div>`).join("");
+  const max = Math.max(...Object.values(bySec), 1);
+  $("sector-bars").innerHTML = total ? Object.entries(bySec).sort((a, b) => b[1] - a[1]).map(([s, c]) =>
+    `<div class="bar-row"><div class="label">${escapeHtml(sl(s))}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(c / max * 100)}%;"></div></div><div class="bar-val">${c}</div></div>`).join("")
+    : `<div class="empty">No submissions yet.</div>`;
+  const gapSectors = ["Agriculture","Green Energy","Healthcare","IT-ITeS","Construction"];
+  $("gap-table").querySelector("tbody").innerHTML = gapSectors.map(s => {
+    const rows = R.filter(r => r.sector === s), tc = {};
+    rows.forEach(r => { tc[r.title] = (tc[r.title] || 0) + 1; });
+    return `<tr><td>${sl(s)}</td><td>${rows.length ? rows.length + " of " + total : "No demand signal yet"}</td><td>${rows.length ? escapeHtml(topOf(tc)[0]) : "—"}</td></tr>`;
+  }).join("");
+  $("insight").innerHTML = total && topSec[0] !== "—"
+    ? `<b>Possible planning insight:</b><br>The demo submissions show higher demand for ${escapeHtml(sl(topSec[0]))}-related pathways (${topSec[1]} of ${total}). This could be considered while planning future training interventions.`
+    : "No submissions yet.";
+  $("records-table").querySelector("tbody").innerHTML = total ? R.map(r =>
+    `<tr><td>${escapeHtml(r.name)}${r.demo ? '<span class="src">demo</span>' : (r.sample ? '<span class="src">sample beneficiary</span>' : "")}</td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.occ)}</td><td>${escapeHtml(r.title)}</td><td>${r.level === "—" ? "—" : "NSQF " + r.level}</td></tr>`).join("")
+    : `<tr><td colspan="5" class="empty">No records yet.</td></tr>`;
+}
+
+/* ---------- Tabs ---------- */
+function switchTab(name) {
+  document.querySelectorAll("nav.tabs button[data-tab]").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === "panel-" + name));
+  window.scrollTo({top:0});
+}
+document.querySelectorAll("nav.tabs button[data-tab]").forEach(btn => { btn.onclick = () => switchTab(btn.dataset.tab); });
+
+state.records = seedRecords();
+renderDashboard();
+</script>
+</body>
+</html>
